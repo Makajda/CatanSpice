@@ -29,26 +29,26 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-        var slots: ArrayList<Slot>? = null
-        var settlements: ArrayList<Settlement>? = null
         if (savedInstanceState != null) {
             try {
                 playersCount = savedInstanceState.getInt(savedNamePlayersCount)
                 val slotsType: Type = object : TypeToken<ArrayList<Slot>?>() {}.type
-                slots = Gson().fromJson(savedInstanceState.getString(savedNameSlots), slotsType)
+                val slots: ArrayList<Slot>? = Gson()
+                    .fromJson(savedInstanceState.getString(savedNameSlots), slotsType)
                 val settlementsType: Type = object : TypeToken<ArrayList<Settlement>?>() {}.type
-                settlements = Gson().fromJson(savedInstanceState.getString(savedNameSettlements), settlementsType)
+                val settlements: ArrayList<Settlement>? = Gson()
+                    .fromJson(savedInstanceState.getString(savedNameSettlements), settlementsType)
+                map.copyFrom(slots, settlements)
             }
             catch (e: Exception) { }
         }
 
-        map.createSlots(slots)
-        map.createSettlements(settlements)
-        map.createCrosses()
         addViewAndButtons()
-        if(slots==null || settlements==null) {
+
+        if(map.crosses.size == 0) {
+            map.create()
             mixAll()
         }
     }
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         val display = windowManager.defaultDisplay
         val size = Point()
         display.getSize(size)
-        val isVertical = size.x < size.y;
+        val isVertical = size.x < size.y
 
         val mainLayout = RelativeLayout(this)
         setContentView(mainLayout)
