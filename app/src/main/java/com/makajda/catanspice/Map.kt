@@ -1,19 +1,5 @@
 package com.makajda.catanspice
 
-class Slot(val x: Int, val z: Int) {
-    var prod = 0
-    var jetton = 0
-
-    val y: Int
-        get() = -x - z
-
-}
-
-class Settlement(val id: Int) {
-    var slot: Slot? = null
-    var isUp = false
-}
-
 class Map {
     val slots = ArrayList<Slot>()
     val settlements = Array<Settlement>(Given.settlements.size * 2) {
