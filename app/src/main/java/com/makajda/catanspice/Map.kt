@@ -1,35 +1,58 @@
 package com.makajda.catanspice
 
+import com.google.gson.annotations.Expose
+
 class Map {
     val slots = ArrayList<Slot>()
-    val crosses = ArrayList<Cross>()
-    val settlements = Array<Settlement>(Given.settlements.size * 2) {
-            i -> Settlement(i / 2)
-    }
+    val settlements = ArrayList<Settlement>()
 
-    init {
-        createSlots();
-        createCrosses();
-    }
+    @Expose(serialize = false, deserialize = false)
+    var crosses = ArrayList<Cross>()
 
-    private fun createSlots() {
-        for (q in 0..Given.edge) {
-            for (r in 0..Given.edge) {
-                slots.add(Slot(q, -r))
-                if (q != 0 || r != 0) {
-                    slots.add(Slot(-q, r))
+    fun createSlots(inits: ArrayList<Slot>?) {
+        if(inits == null) {
+            for (q in 0..Given.edge) {
+                for (r in 0..Given.edge) {
+                    slots.add(Slot(q, -r))
+                    if (q != 0 || r != 0) {
+                        slots.add(Slot(-q, r))
+                    }
+                }
+            }
+            for (q in 1 until Given.edge) {
+                for (r in 1..Given.edge - q) {
+                    slots.add(Slot(q, r))
+                    slots.add(Slot(-q, -r))
                 }
             }
         }
-        for (q in 1 until Given.edge) {
-            for (r in 1..Given.edge - q) {
-                slots.add(Slot(q, r))
-                slots.add(Slot(-q, -r))
+        else {
+            for(slot in inits) {
+                val newSlot = Slot(slot.x, slot.z)
+                newSlot.prod = slot.prod
+                newSlot.jetton = slot.jetton
+                slots.add(newSlot)
             }
         }
     }
 
-    private fun createCrosses() {
+    fun createSettlements(inits: ArrayList<Settlement>?) {
+        if(inits == null) {
+            for(i in 0 until Given.settlements.size * 2) {
+                settlements.add(Settlement(i / 2))
+            }
+        }
+        else {
+            for(settlement in inits) {
+                val newSettlement = Settlement(settlement.id)
+                newSettlement.slot = settlement.slot
+                newSettlement.isUp = settlement.isUp
+                settlements.add(newSettlement)
+            }
+        }
+    }
+
+    fun createCrosses() {
         val pairs = createPairs()
         while (pairs.size > 0) {
             val pair = pairs[0];

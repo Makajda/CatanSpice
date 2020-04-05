@@ -7,7 +7,7 @@ import kotlin.collections.ArrayList
 class MixSettlements {
     private val radius = 30 //only for validate distance
 
-    fun mix(slots: ArrayList<Slot>, settlements: Array<Settlement>, playersCount: Int) {
+    fun mix(slots: ArrayList<Slot>, settlements: ArrayList<Settlement>, playersCount: Int) {
         for (settlement in settlements) {
             settlement.slot = null
         }
@@ -25,7 +25,7 @@ class MixSettlements {
     private fun validate(
         settlement: Settlement,
         slots: ArrayList<Slot>,
-        settlements: Array<Settlement>,
+        settlements: ArrayList<Settlement>,
         is3: Boolean
     ): Boolean {
         //desert && edge

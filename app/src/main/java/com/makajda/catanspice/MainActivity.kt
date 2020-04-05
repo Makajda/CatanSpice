@@ -10,11 +10,16 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 
 class MainActivity : AppCompatActivity() {
     private val controlsLayoutId = 1
     private val savedNamePlayersCount = "PlayersCount"
+    private val savedNameSlots = "Slots"
+    private val savedNameSettlements = "Settlements"
     private var playersCount = 3
     private var map = Map()
     private val mixProds = MixProds()
@@ -25,17 +30,36 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+        var slots: ArrayList<Slot>? = null
+        var settlements: ArrayList<Settlement>? = null
         if (savedInstanceState != null) {
-            playersCount = savedInstanceState.getInt(savedNamePlayersCount)
+            try {
+                playersCount = savedInstanceState.getInt(savedNamePlayersCount)
+                val slotsType: Type = object : TypeToken<ArrayList<Slot>?>() {}.type
+                slots = Gson().fromJson(savedInstanceState.getString(savedNameSlots), slotsType)
+                val settlementsType: Type = object : TypeToken<ArrayList<Settlement>?>() {}.type
+                settlements = Gson().fromJson(savedInstanceState.getString(savedNameSettlements), settlementsType)
+            }
+            catch (e: Exception) { }
         }
 
+        map.createSlots(slots)
+        map.createSettlements(settlements)
+        map.createCrosses()
         addViewAndButtons()
-        mixAll()
+        if(slots==null || settlements==null) {
+            mixAll()
+        }
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
         savedInstanceState.putInt(savedNamePlayersCount, playersCount)
+        val slotsJson = Gson().toJson(map.slots)
+        savedInstanceState.putString(savedNameSlots, slotsJson)
+        val settlementsJson = Gson().toJson(map.settlements)
+        savedInstanceState.putString(savedNameSettlements, settlementsJson)
     }
 
     fun onDrawChildView(canvas: Canvas) {
@@ -77,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             mainLayout.addView(controlsLayout, controlsLayoutParams)
         }
 
-        controlsLayout.addView(getButton(R.drawable.ic_action_mix_jettons) { mixJettons(); view.invalidate() })
+        //controlsLayout.addView(getButton(R.drawable.ic_action_mix_jettons) { mixJettons(); view.invalidate() })
         controlsLayout.addView(getButton(R.drawable.ic_action_mix3) { mixSettlements(3); view.invalidate() })
         controlsLayout.addView(getButton(R.drawable.ic_action_mix4) { mixSettlements(4); view.invalidate() })
         controlsLayout.addView(getButton(R.drawable.ic_action_mix_all) { mixAll(); view.invalidate() })
