@@ -28,7 +28,7 @@ internal class Draw {
         shiftX = width / 2
         shiftY = height / 2
         radiusHexagon = (Math.min(width, height) / (Given.edge * 2.0 + 1.0) / Math.sqrt(3.0)).toInt()
-        radiusEllipse = (radiusHexagon / 2.7).toInt()
+        radiusEllipse = (radiusHexagon / 2.3).toInt()
         jettonFontSize = (radiusHexagon / 1.7).toInt()
         canvas.drawColor(-0x334334)
     }

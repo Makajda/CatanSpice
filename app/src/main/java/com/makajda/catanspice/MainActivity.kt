@@ -10,56 +10,31 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
 
 
 class MainActivity : AppCompatActivity() {
     private val controlsLayoutId = 1
-    private val savedNamePlayersCount = "PlayersCount"
-    private val savedNameSlots = "Slots"
-    private val savedNameSettlements = "Settlements"
     private var playersCount = 3
-    private var map = Map()
-    private val mixProds = MixProds()
-    private val mixJettons = MixJettons()
-    private val mixSettlements = MixSettlements()
-    private var draw: Draw = Draw()
+    private val map = Map()
+    private val mixer = Mixer()
+    private val draw: Draw = Draw()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-        if (savedInstanceState != null) {
-            try {
-                playersCount = savedInstanceState.getInt(savedNamePlayersCount)
-                val slotsType: Type = object : TypeToken<ArrayList<Slot>?>() {}.type
-                val slots: ArrayList<Slot>? = Gson()
-                    .fromJson(savedInstanceState.getString(savedNameSlots), slotsType)
-                val settlementsType: Type = object : TypeToken<ArrayList<Settlement>?>() {}.type
-                val settlements: ArrayList<Settlement>? = Gson()
-                    .fromJson(savedInstanceState.getString(savedNameSettlements), settlementsType)
-                map.copyFrom(slots, settlements)
-            }
-            catch (e: Exception) { }
-        }
-
+        playersCount = MainState.fromState(savedInstanceState, map)
         addViewAndButtons()
 
-        if(map.crosses.size == 0) {
+        if(map.slots.size == 0 || map.settlements.size == 0) {
             map.create()
-            mixAll()
+            mixer.mix(map.slots, map.settlements, playersCount)
         }
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState.putInt(savedNamePlayersCount, playersCount)
-        val slotsJson = Gson().toJson(map.slots)
-        savedInstanceState.putString(savedNameSlots, slotsJson)
-        val settlementsJson = Gson().toJson(map.settlements)
-        savedInstanceState.putString(savedNameSettlements, settlementsJson)
+        MainState.toState(savedInstanceState, map.slots, map.settlements, playersCount)
     }
 
     fun onDrawChildView(canvas: Canvas) {
@@ -101,10 +76,8 @@ class MainActivity : AppCompatActivity() {
             mainLayout.addView(controlsLayout, controlsLayoutParams)
         }
 
-        //controlsLayout.addView(getButton(R.drawable.ic_action_mix_jettons) { mixJettons(); view.invalidate() })
-        controlsLayout.addView(getButton(R.drawable.ic_action_mix3) { mixSettlements(3); view.invalidate() })
-        controlsLayout.addView(getButton(R.drawable.ic_action_mix4) { mixSettlements(4); view.invalidate() })
-        controlsLayout.addView(getButton(R.drawable.ic_action_mix_all) { mixAll(); view.invalidate() })
+        controlsLayout.addView(getButton(R.drawable.ic_action_mix4) { mix(4, view); })
+        controlsLayout.addView(getButton(R.drawable.ic_action_mix3) { mix(3, view); })
     }
 
     private fun getButton(resId: Int, onClick: (View) -> Unit): ImageButton {
@@ -125,19 +98,9 @@ class MainActivity : AppCompatActivity() {
         return button
     }
 
-    private fun mixJettons() {
-        mixJettons.mix(map.slots)
-        mixSettlements.mix(map.slots, map.settlements, playersCount)
-    }
-
-    private fun mixSettlements(playersCount: Int) {
+    private fun mix(playersCount: Int, view: MainView) {
         this.playersCount = playersCount
-        mixSettlements.mix(map.slots, map.settlements, playersCount)
-    }
-
-    private fun mixAll() {
-        mixProds.mix(map.slots)
-        mixJettons.mix(map.slots)
-        mixSettlements.mix(map.slots, map.settlements, playersCount)
+        mixer.mix(map.slots, map.settlements, playersCount)
+        view.invalidate()
     }
 }
