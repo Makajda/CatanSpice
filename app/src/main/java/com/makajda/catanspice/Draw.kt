@@ -55,7 +55,10 @@ internal class Draw {
         }
         val paint = getPaint(Given.prodsColor.get(slot.prod).toInt())
         canvas!!.drawPath(path, paint)
-        Jetton(slot.jetton, center)
+
+        if (slot.jetton > 0) Jetton(Integer.toString(slot.jetton), center)
+
+        //Jetton("${slot.x}.${slot.y}.${slot.z}", center)
     }
 
     private fun Settlement(settlement: Settlement?) {
@@ -77,25 +80,23 @@ internal class Draw {
         }
     }
 
-    private fun Jetton(jetton: Int, center: Point) {
-        if (jetton > 0) {
-            val paint = Paint()
-            paint.isFakeBoldText = true
-            paint.textSize = jettonFontSize.toFloat()
-            if (jetton == 6 || jetton == 8) {
-                paint.color = Color.RED
-            } else {
-                paint.color = Color.BLACK
-            }
-            val text = Integer.toString(jetton)
-            paint.getTextBounds(text, 0, text.length, jettonTextBounds)
-            canvas!!.drawText(
-                text,
-                center.x - jettonTextBounds.exactCenterX(),
-                center.y - jettonTextBounds.exactCenterY(),
-                paint
-            )
+    private fun Jetton(jetton: String, center: Point) {
+        val paint = Paint()
+        paint.isFakeBoldText = true
+        paint.textSize = jettonFontSize.toFloat()
+        if (jetton == "6" || jetton == "8") {
+            paint.color = Color.RED
+        } else {
+            paint.color = Color.BLACK
         }
+
+        paint.getTextBounds(jetton, 0, jetton.length, jettonTextBounds)
+        canvas!!.drawText(
+            jetton,
+            center.x - jettonTextBounds.exactCenterX(),
+            center.y - jettonTextBounds.exactCenterY(),
+            paint
+        )
     }
 
     companion object {
