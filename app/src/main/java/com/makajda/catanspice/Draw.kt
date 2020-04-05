@@ -29,7 +29,7 @@ internal class Draw {
         shiftY = height / 2
         radiusHexagon = (Math.min(width, height) / (Given.edge * 2.0 + 1.0) / Math.sqrt(3.0)).toInt()
         radiusEllipse = (radiusHexagon / 2.7).toInt()
-        jettonFontSize = (radiusHexagon / 2.7).toInt()
+        jettonFontSize = (radiusHexagon / 1.7).toInt()
         canvas.drawColor(-0x334334)
     }
 
@@ -56,7 +56,7 @@ internal class Draw {
         val paint = getPaint(Given.prodsColor.get(slot.prod).toInt())
         canvas!!.drawPath(path, paint)
 
-        if (slot.jetton > 0) Jetton(Integer.toString(slot.jetton), center)
+        if (slot.jetton > 0) Jetton(Integer.toString(slot.jetton), center, slot.prod)
 
         //Jetton("${slot.x}.${slot.y}.${slot.z}", center)
     }
@@ -80,14 +80,14 @@ internal class Draw {
         }
     }
 
-    private fun Jetton(jetton: String, center: Point) {
+    private fun Jetton(jetton: String, center: Point, prod: Int) {
         val paint = Paint()
         paint.isFakeBoldText = true
         paint.textSize = jettonFontSize.toFloat()
         if (jetton == "6" || jetton == "8") {
             paint.color = Color.RED
         } else {
-            paint.color = Color.BLACK
+            paint.color = if(prod == 3) Color.BLACK else Color.WHITE
         }
 
         paint.getTextBounds(jetton, 0, jetton.length, jettonTextBounds)
