@@ -17,6 +17,14 @@ abstract class MixBase {
         } while (!validate(slots))
     }
 
+    private fun addItems(counts: IntArray) {
+        for ((index, p) in counts.withIndex()) {
+            for (i in 0 until p) {
+                items.add(index)
+            }
+        }
+    }
+
     protected fun getItem(): Int {
         val count: Int = items.size
         val p: Int = Random.nextInt(count)
@@ -44,13 +52,5 @@ abstract class MixBase {
         }
 
         return true
-    }
-
-    private fun addItems(counts: IntArray) {
-        for ((index, p) in counts.withIndex()) {
-            for (i in 0 until p) {
-                items.add(index)
-            }
-        }
     }
 }

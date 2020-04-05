@@ -3,6 +3,7 @@ package com.makajda.catanspice
 import android.graphics.*
 
 internal class Draw {
+    val pointsCount = 6
     private var shiftX = 0
     private var shiftY = 0
     private var radiusEllipse = 0
@@ -34,24 +35,12 @@ internal class Draw {
     }
 
     private fun Slot(slot: Slot) {
-        val pointCount = 6
-        val center: Point = getCenter(slot.x, slot.z, radiusHexagon)
-        center.x += shiftX
-        center.y += shiftY
-        val points =
-            arrayOfNulls<Point>(pointCount)
-        for (i in 0 until pointCount) {
-            val a = 60 * i + 30.toDouble()
-            val r = a * Math.PI / 180
-            points[i] = Point(
-                center.x + (radiusHexagon * Math.cos(r)).toInt(),
-                center.y + (radiusHexagon * Math.sin(r)).toInt()
-            )
-        }
+        val center: Point = getCenter(slot.x, slot.z)
+        val points = getPoints(center)
         val path = Path()
-        path.moveTo(points[0]!!.x.toFloat(), points[0]!!.y.toFloat())
-        for (i in 1 until pointCount) {
-            path.lineTo(points[i]!!.x.toFloat(), points[i]!!.y.toFloat())
+        path.moveTo(points[0].x.toFloat(), points[0].y.toFloat())
+        for (i in 1 until pointsCount) {
+            path.lineTo(points[i].x.toFloat(), points[i].y.toFloat())
         }
         val paint = getPaint(Given.prodsColor.get(slot.prod).toInt())
         canvas!!.drawPath(path, paint)
@@ -62,21 +51,21 @@ internal class Draw {
     }
 
     private fun Settlement(settlement: Settlement?) {
-        if (settlement != null && settlement.slot != null) {
-            val paint = getPaint(Given.settlements.get(settlement.id))
-            val center: Point =
-                getCenter(
-                    settlement.slot!!.x,
-                    settlement.slot!!.z,
-                    radiusHexagon,
-                    settlement.isUp
-                )
-            canvas!!.drawCircle(
-                center.x + shiftX.toFloat(),
-                center.y + shiftY.toFloat(),
-                radiusEllipse.toFloat(),
-                paint
-            )
+        if (settlement != null) {
+            val cross = settlement.cross
+            if (cross != null) {
+                val point = getEqPoint(cross)
+                if (point != null) {
+                    val paint = getPaint(Given.settlements.get(settlement.id))
+                    val center = getCenter(point.x, point.y)
+                    canvas!!.drawCircle(
+                        center.x + shiftX.toFloat(),
+                        center.y + shiftY.toFloat(),
+                        radiusEllipse.toFloat(),
+                        paint
+                    )
+                }
+            }
         }
     }
 
@@ -97,6 +86,45 @@ internal class Draw {
             center.y - jettonTextBounds.exactCenterY(),
             paint
         )
+    }
+
+    private fun getPoints(center: Point): ArrayList<Point> {
+        center.x += shiftX
+        center.y += shiftY
+        val points = ArrayList<Point>()
+        for (i in 0 until pointsCount) {
+            val a = 60 * i + 30.toDouble()
+            val r = a * Math.PI / 180
+            points.add(Point(
+                center.x + (radiusHexagon * Math.cos(r)).toInt(),
+                center.y + (radiusHexagon * Math.sin(r)).toInt()
+            ))
+        }
+        return points
+    }
+
+    private fun getEqPoint(cross: Cross): Point? {
+        val points1 = getPoints(getCenter(cross.slot1.x, cross.slot1.z))
+        val points2 = getPoints(getCenter(cross.slot2.x, cross.slot2.z))
+        val points3 = getPoints(getCenter(cross.slot3.x, cross.slot3.z))
+
+        for(point1 in points1)
+            for(point2 in points2)
+                for(point3 in points3)
+                    if(
+                        point1.x == point2.x && point2.x == point3.x &&
+                        point1.y == point2.y && point2.y == point3.y
+                    )
+                        return point1
+
+        return null
+    }
+
+    private fun getCenter(q: Int, r: Int) : Point {
+        //Внутренний радиус равен Math.Sqrt(3d) / 2d от внешнего радиуса
+        val centerX = q * radiusHexagon * 2.0 * Math.sqrt(3.0) / 2.0 + r * radiusHexagon * Math.sqrt(3.0) / 2.0
+        val centerY = r * radiusHexagon * 3.0 / 2.0
+        return Point(centerX.toInt(), centerY.toInt())
     }
 
     companion object {
