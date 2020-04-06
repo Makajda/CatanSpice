@@ -76,8 +76,8 @@ class MainActivity : AppCompatActivity() {
             mainLayout.addView(controlsLayout, controlsLayoutParams)
         }
 
-        controlsLayout.addView(getButton(R.drawable.ic_action_mix4) { mix(4, view); })
-        controlsLayout.addView(getButton(R.drawable.ic_action_mix3) { mix(3, view); })
+        controlsLayout.addView(getButton(R.drawable.ic_mix4) { mix(4, view); })
+        controlsLayout.addView(getButton(R.drawable.ic_mix3) { mix(3, view); })
     }
 
     private fun getButton(resId: Int, onClick: (View) -> Unit): ImageButton {

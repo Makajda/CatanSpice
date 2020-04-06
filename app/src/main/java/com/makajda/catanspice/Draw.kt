@@ -47,7 +47,7 @@ internal class Draw {
         val paint = getPaint(Given.prodsColor.get(slot.prod).toInt())
         canvas!!.drawPath(path, paint)
 
-        if (slot.jetton > 0) Jetton(Integer.toString(slot.jetton), center, slot.prod)
+        if (slot.jetton > 0) Jetton(Integer.toString(slot.jetton), center)
 
         //Jetton("${slot.x}.${slot.y}.${slot.z}", center)
     }
@@ -72,14 +72,15 @@ internal class Draw {
         }
     }
 
-    private fun Jetton(jetton: String, center: Point, prod: Int) {
+    private fun Jetton(jetton: String, center: Point) {
         val paint = Paint()
-        paint.isFakeBoldText = true
-        paint.textSize = jettonFontSize.toFloat()
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
         if (jetton == "6" || jetton == "8") {
             paint.color = Color.RED
+            paint.textSize = jettonFontSize * 1.3f
         } else {
-            paint.color = if(prod == 3) Color.BLACK else Color.WHITE
+            paint.color = Color.BLACK
+            paint.textSize = jettonFontSize.toFloat()
         }
 
         paint.getTextBounds(jetton, 0, jetton.length, jettonTextBounds)

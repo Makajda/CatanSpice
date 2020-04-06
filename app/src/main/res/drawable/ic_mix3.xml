@@ -1,0 +1,25 @@
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="48dp"
+    android:width="48dp"
+    android:viewportHeight="48.0"
+    android:viewportWidth="48.0"
+    >
+
+    <path
+        android:fillColor="#FFA500"
+        android:pathData="M8,24 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M24,24 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+    <path
+        android:fillColor="#0000FF"
+        android:pathData="M40,24 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"/>
+
+
+    <!--        pathData -->
+    <!--        M cx, cy-->
+    <!--        m -r, 0-->
+    <!--        a r,r 0 1,0 (r * 2),0-->
+    <!--        a r,r 0 1,0 -(r * 2),0-->
+</vector>
