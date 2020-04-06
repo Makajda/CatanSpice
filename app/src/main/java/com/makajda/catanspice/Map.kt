@@ -22,7 +22,16 @@ class Map {
 
             for(settlement in initSettlements) {
                 val newSettlement = Settlement(settlement.id)
-                newSettlement.cross = settlement.cross
+                for(slot in slots) {
+                    val oldSlot = settlement.slot
+                    if(oldSlot != null) {
+                        if (slot.x == oldSlot.x && slot.z == oldSlot.z) {
+                            newSettlement.slot = slot
+                            break
+                        }
+                    }
+                }
+                newSettlement.isUp = settlement.isUp
                 settlements.add(newSettlement)
             }
         }

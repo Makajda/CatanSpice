@@ -1,5 +1,6 @@
 package com.makajda.catanspice
 
 class Settlement(val id: Int) {
-    var cross: Cross? = null
+    var slot: Slot? = null
+    var isUp = false
 }

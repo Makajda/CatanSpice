@@ -1,6 +1,7 @@
 package com.makajda.catanspice
 
 import android.graphics.Color
+import android.graphics.Point
 
 object Given {
     val edge: Int = 2
@@ -11,4 +12,16 @@ object Given {
     val jettonsCount = intArrayOf(1, 2, 2, 2, 2, 2, 2, 2, 2, 1)
     val jettonsValue = intArrayOf(2, 3, 4, 5, 6, 8, 9, 10, 11, 12)
     val settlements = intArrayOf(Color.RED, Color.BLUE, -23269, Color.WHITE)
+}
+
+fun getCenter(q: Int, r: Int, radius: Int) : Point {
+    //Внутренний радиус равен Math.Sqrt(3d) / 2d от внешнего радиуса
+    val centerX = q * radius * 2.0 * Math.sqrt(3.0) / 2.0 + r * radius * Math.sqrt(3.0) / 2.0
+    val centerY = r * radius * 3.0 / 2.0
+    return Point(centerX.toInt(), centerY.toInt())
+}
+
+fun getCenter(q: Int, r: Int, radius: Int, isUp: Boolean) : Point {
+    val c = getCenter(q, r, radius)
+    return Point(c.x, c.y  + if(isUp) -radius else radius)
 }
