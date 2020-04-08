@@ -45,7 +45,7 @@ internal class Draw {
         for (i in 1 until pointsCount) {
             path.lineTo(points[i].x.toFloat(), points[i].y.toFloat())
         }
-        val paint = getPaint(Given.prodsColor.get(slot.prod).toInt())
+        val paint = getPaint(Given.prodsColor.get(if(slot.prod > Given.clearValue) slot.prod else 0).toInt())
         canvas!!.drawPath(path, paint)
 
         if (slot.jetton > 0) Jetton(Integer.toString(slot.jetton), center)
