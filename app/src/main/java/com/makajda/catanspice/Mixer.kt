@@ -5,9 +5,9 @@ class Mixer {
     private val mixJettons = MixJettons()
     private val mixSettlements = MixSettlements()
 
-    fun mix(slots: ArrayList<Slot>, settlements: ArrayList<Settlement>, playersCount: Int) {
+    fun mix(slots: ArrayList<Slot>, playersCount: Int) {
         mixProds.mix(slots)
         mixJettons.mix(slots)
-        mixSettlements.mix(slots, settlements, playersCount)
+        mixSettlements.mix(slots, playersCount)
     }
 }

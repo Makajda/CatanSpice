@@ -8,7 +8,8 @@ abstract class MixBase {
     protected abstract fun getValue(slot: Slot) : Int
     protected abstract fun setValue(slot: Slot)
     protected abstract fun clearValue(slot: Slot)
-    protected abstract fun checkRest(slot1: Slot, slot2: Slot) : Boolean
+
+    protected open fun checkRest(slot1: Slot, slot2: Slot) : Boolean = true
 
     protected fun mix(slots: ArrayList<Slot>, counts: IntArray) {
         do {
@@ -50,7 +51,7 @@ abstract class MixBase {
         }
     }
 
-    private fun validate(slot: Slot, slots: ArrayList<Slot>): Boolean {
+    protected open fun validate(slot: Slot, slots: ArrayList<Slot>): Boolean {
         //проверить есть ли соседние одинаковые, смотрим вокруг
         for (n in slots) {
             if (getValue(n) > Given.clearValue &&

@@ -12,13 +12,14 @@ internal class Draw {
     private val jettonTextBounds = Rect()
     private var canvas: Canvas? = null
 
-    fun redraw(map: Map, canvas: Canvas, deltaX: Int, deltaY: Int) {
+    fun redraw(map: Map, canvas: Canvas, deltaX: Int, deltaY: Int, playerCount: Int) {
         setCanvas(canvas, deltaX, deltaY)
         for (slot in map.slots) {
             Slot(slot)
         }
-        for (settlement in map.settlements) {
-            Settlement(settlement)
+
+        for (slot in map.slots) {
+            if (checkSettlementId(slot.settlement, playerCount)) Settlement(slot)
         }
     }
 
@@ -52,24 +53,21 @@ internal class Draw {
         //Jetton("${slot.x}.${slot.y}.${slot.z}", center)
     }
 
-    private fun Settlement(settlement: Settlement) {
-        val slot = settlement.slot
-        if(slot != null) {
-            val paint = getPaint(Given.settlements.get(settlement.id))
-            val center: Point =
-                getCenter(
-                    slot.x,
-                    slot.z,
-                    radiusHexagon,
-                    settlement.isUp
-                )
-            canvas!!.drawCircle(
-                (center.x + shiftX).toFloat(),
-                (center.y + shiftY).toFloat(),
-                radiusEllipse.toFloat(),
-                paint
+    private fun Settlement(slot: Slot) {
+        val paint = getPaint(Given.settlementsColor.get(slot.settlement))
+        val center: Point =
+            getCenter(
+                slot.x,
+                slot.z,
+                radiusHexagon,
+                slot.isUp
             )
-        }
+        canvas!!.drawCircle(
+            (center.x + shiftX).toFloat(),
+            (center.y + shiftY).toFloat(),
+            radiusEllipse.toFloat(),
+            paint
+        )
     }
 
     private fun Jetton(jetton: String, center: Point) {

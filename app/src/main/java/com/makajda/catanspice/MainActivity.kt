@@ -26,20 +26,20 @@ class MainActivity : AppCompatActivity() {
         playersCount = MainState.fromState(savedInstanceState, map)
         addViewAndButtons()
 
-        if(map.slots.size == 0 || map.settlements.size == 0) {
+        if(map.slots.size == 0) {
             map.create()
-            mixer.mix(map.slots, map.settlements, playersCount)
+            mixer.mix(map.slots, playersCount)
         }
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        MainState.toState(savedInstanceState, map.slots, map.settlements, playersCount)
+        MainState.toState(savedInstanceState, map.slots, playersCount)
     }
 
     fun onDrawChildView(canvas: Canvas) {
         val controlsLayout = findViewById<LinearLayout>(controlsLayoutId)
-        draw.redraw(map, canvas, controlsLayout.width, controlsLayout.height)
+        draw.redraw(map, canvas, controlsLayout.width, controlsLayout.height, playersCount)
     }
 
     private fun addViewAndButtons() {
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun mix(playersCount: Int, view: MainView) {
         this.playersCount = playersCount
-        mixer.mix(map.slots, map.settlements, playersCount)
+        mixer.mix(map.slots, playersCount)
         view.invalidate()
     }
 }
