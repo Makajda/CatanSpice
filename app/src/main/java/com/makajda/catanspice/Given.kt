@@ -12,6 +12,7 @@ object Given {
     val jettonsCount = intArrayOf(1, 2, 2, 2, 2, 2, 2, 2, 2, 1)
     val jettonsValue = intArrayOf(2, 3, 4, 5, 6, 8, 9, 10, 11, 12)
     val settlements = intArrayOf(Color.RED, Color.BLUE, -23269, Color.WHITE) //-23269 = 0xFFA500
+    val clearValue = -1 // < 0
 }
 
 fun getCenter(q: Int, r: Int, radius: Int) : Point {

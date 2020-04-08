@@ -11,63 +11,79 @@ class MixSettlements {
         val is3 = playersCount == 3
         val slotsCount = slots.size
 
-        do {
-            for (settlement in settlements) {
-                settlement.slot = null
-            }
+        for (settlement in settlements) {
+            settlement.slot = null
+        }
 
-            for (i in 0 until playersCount * 2) {
-                val settlement = settlements[i]
+        for (k in 0..1) {
+            for (i in 0 until playersCount) {
+                val settlement = settlements[i * 2 + k]
                 do {
                     settlement.slot = slots[Random.nextInt(slotsCount)]
                     settlement.isUp = Random.nextBoolean()
-                } while (!validate(settlement, slots, settlements, is3))
+                } while (!validate(settlement, slots, settlements, is3, k == 0))
             }
-
-            var v68 = true
-            for (i in 0 until playersCount) {
-                val jetton1 = settlements[i * 2].slot!!.jetton
-                val jetton2 = settlements[i * 2 + 1].slot!!.jetton
-                v68 = jetton1 == 6 || jetton2 == 6 || jetton1 == 8 || jetton2 == 8
-            }
-        } while (!v68)
+        }
     }
 
     private fun validate(
         settlement: Settlement,
         slots: ArrayList<Slot>,
         settlements: ArrayList<Settlement>,
-        is3: Boolean
+        is3: Boolean,
+        needGoodJetton: Boolean
     ): Boolean {
-        //desert && edge
-        if (is3 && settlement.slot!!.prod == 0) {
-            return false
-        } else {
+        val slot = settlement.slot
+        if(slot != null) {
+            //desert
+            if (is3 && slot.prod == 0) {
+                return false
+            }
+
+            //desert & edge
             val one = if (settlement.isUp) 1 else -1
-            if(!checkNeighbor(slots, settlement.slot!!, 0, one, is3))
+            val (isEdgeA, gj1) = checkNeighbor(slots, slot, 0, one, is3)
+            if(!isEdgeA) {
                 return false
-            if(!checkNeighbor(slots, settlement.slot!!, one, one, is3))
+            }
+            val (isEdgeB, gj2) = checkNeighbor(slots, slot, one, one, is3)
+            if(!isEdgeB) {
                 return false
-        }
+            }
 
-        // Validate Distance
-        val center: Point = getCenter(
-            settlement.slot!!.x, settlement.slot!!.z, radius, settlement.isUp)
-
-        for (settlementRest in settlements) {
-            if (settlementRest !== settlement && settlementRest.slot != null) {
-                val centerRest: Point = getCenter(
-                    settlementRest.slot!!.x,
-                    settlementRest.slot!!.z,
-                    radius,
-                    settlementRest.isUp
-                )
-                val distance = Math.sqrt(
-                    Math.pow(center.x - centerRest.x.toDouble(), 2.0) +
-                            Math.pow(center.y - centerRest.y.toDouble(), 2.0)
-                ).toInt()
-                if (distance < radius + 1) {
+            //6-8
+            val gj3 = goodJetton(slot)
+            if(needGoodJetton) {
+                if(!gj1 && !gj2 && !gj3) {
                     return false
+                }
+            }
+            else {
+                if(gj1 || gj2 || gj3) {
+                    return false
+                }
+            }
+
+            // Validate Distance
+            val center: Point = getCenter(slot.x, slot.z, radius, settlement.isUp)
+            for (settlementRest in settlements) {
+                if (settlementRest !== settlement) {
+                    val slotRest = settlementRest.slot
+                    if (slotRest != null) {
+                        val centerRest: Point = getCenter(
+                            slotRest.x,
+                            slotRest.z,
+                            radius,
+                            settlementRest.isUp
+                        )
+                        val distance = Math.sqrt(
+                            Math.pow(center.x - centerRest.x.toDouble(), 2.0) +
+                                    Math.pow(center.y - centerRest.y.toDouble(), 2.0)
+                        ).toInt()
+                        if (distance < radius + 1) {
+                            return false
+                        }
+                    }
                 }
             }
         }
@@ -80,13 +96,18 @@ class MixSettlements {
         x: Int,
         z: Int,
         is3: Boolean
-    ): Boolean {
+    ): Pair<Boolean, Boolean> {
         for (n in slots) {
             if (n.x == slot.x + x && n.z == slot.z - z) {
-                return !is3 || n.prod > 0
+                return Pair(!is3 || n.prod > 0, goodJetton(n))
             }
         }
 
-        return false
+        return Pair(false, false)
+    }
+
+    private fun goodJetton(slot: Slot) : Boolean {
+        val jetton = slot.jetton
+        return jetton == 6 || jetton == 8
     }
 }
