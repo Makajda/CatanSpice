@@ -73,13 +73,8 @@ internal class Draw {
     private fun Jetton(jetton: String, center: Point) {
         val paint = Paint()
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
-        if (jetton == "6" || jetton == "8") {
-            paint.color = Color.RED
-            paint.textSize = jettonFontSize * 1.3f
-        } else {
-            paint.color = Color.BLACK
-            paint.textSize = jettonFontSize.toFloat()
-        }
+        paint.color = Color.rgb(75, 0,130)
+        paint.textSize = jettonFontSize * 1.2f
 
         paint.getTextBounds(jetton, 0, jetton.length, jettonTextBounds)
         canvas!!.drawText(
