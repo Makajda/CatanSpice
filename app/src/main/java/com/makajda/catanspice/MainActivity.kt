@@ -1,7 +1,7 @@
 package com.makajda.catanspice
 
+import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Point
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -32,9 +32,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        super.onSaveInstanceState(savedInstanceState)
-        MainState.toState(savedInstanceState, map.slots, playersCount)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        MainState.toState(outState, map.slots, playersCount)
     }
 
     fun onDrawChildView(canvas: Canvas) {
@@ -43,10 +43,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addViewAndButtons() {
-        val display = windowManager.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        val isVertical = size.x < size.y
+        val dm = Resources.getSystem().displayMetrics
+        val isVertical = dm.widthPixels < dm.heightPixels
+        //val display = windowManager.defaultDisplay
+        //val size = Point()
+        //display.getSize(size)
+        //val isVertical = size.x < size.y
 
         val mainLayout = RelativeLayout(this)
         setContentView(mainLayout)
